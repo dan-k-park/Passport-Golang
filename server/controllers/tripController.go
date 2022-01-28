@@ -62,3 +62,40 @@ func GetTrip(c *fiber.Ctx) error {
 	}
 	return c.Status(http.StatusOK).JSON(responses.TripResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": trip}})
 }
+
+func EditTrip(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	tripId := c.Params("tripId")
+	var trip models.Trip
+	defer cancel()
+
+	objId, _ := primitive.ObjectIDFromHex(tripId)
+
+	 //validate the request body
+	 if err := c.BodyParser(&trip); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(responses.TripResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+}
+
+//use the validator library to validate required fields
+if validationErr := validate.Struct(&trip); validationErr != nil {
+		return c.Status(http.StatusBadRequest).JSON(responses.TripResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
+}
+
+update := bson.M{"country": trip.Country, "favorite": trip.Favorite, "favorite_thing": trip.Favorite_Thing}
+result, err := tripCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
+ 
+if err != nil {
+	return c.Status(http.StatusInternalServerError).JSON(responses.TripResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+}
+
+var updatedTrip models.Trip
+if result.MatchedCount == 1 {
+	err := tripCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&updatedTrip)
+
+	if err != nil {
+			return c.Status(http.StatusInternalServerError).JSON(responses.TripResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+	}
+}
+
+return c.Status(http.StatusOK).JSON(responses.TripResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": updatedTrip}})
+}

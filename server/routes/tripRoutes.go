@@ -10,4 +10,6 @@ func TripRoute(app *fiber.App) {
 	app.Post("/trip", controllers.CreateTrip)
 
 	app.Get("/trip/:tripId", controllers.GetTrip)
+
+	app.Put("/trip/:tripId", controllers.EditTrip)
 }
