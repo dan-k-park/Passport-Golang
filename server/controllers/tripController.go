@@ -46,6 +46,33 @@ func CreateTrip(c *fiber.Ctx) error {
 	return c.Status(http.StatusCreated).JSON(responses.TripResponse{Status: http.StatusCreated, Message: "success", Data: &fiber.Map{"data": result}})
 }
 
+func GetAllTrips(c * fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    var trips []models.Trip
+    defer cancel()
+
+    results, err := tripCollection.Find(ctx, bson.M{})
+
+    if err != nil {
+        return c.Status(http.StatusInternalServerError).JSON(responses.TripResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+    }
+
+    //reading from the db in an optimal way
+    defer results.Close(ctx)
+    for results.Next(ctx) {
+        var singleTrip models.Trip
+        if err = results.Decode(&singleTrip); err != nil {
+            return c.Status(http.StatusInternalServerError).JSON(responses.TripResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+        }
+
+        trips = append(trips, singleTrip)
+    }
+
+    return c.Status(http.StatusOK).JSON(
+        responses.TripResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": trips}},
+    )
+}
+
 func GetTrip(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	tripId := c.Params("tripId")
