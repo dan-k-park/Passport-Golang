@@ -99,3 +99,26 @@ if result.MatchedCount == 1 {
 
 return c.Status(http.StatusOK).JSON(responses.TripResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": updatedTrip}})
 }
+
+func DeleteTrip(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	tripId := c.Params("tripId")
+	defer cancel()
+
+	objId, _ := primitive.ObjectIDFromHex(tripId)
+
+	result, err := tripCollection.DeleteOne(ctx, bson.M{"id": objId})
+	if err != nil {
+			return c.Status(http.StatusInternalServerError).JSON(responses.TripResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+	}
+
+	if result.DeletedCount < 1 {
+			return c.Status(http.StatusNotFound).JSON(
+					responses.TripResponse{Status: http.StatusNotFound, Message: "error", Data: &fiber.Map{"data": "Trip with specified ID not found!"}},
+			)
+	}
+
+	return c.Status(http.StatusOK).JSON(
+			responses.TripResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": "Trip successfully deleted!"}},
+	)
+}

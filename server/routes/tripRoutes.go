@@ -12,4 +12,5 @@ func TripRoute(app *fiber.App) {
 	app.Get("/trip/:tripId", controllers.GetTrip)
 
 	app.Put("/trip/:tripId", controllers.EditTrip)
+	app.Delete("/trip/:tripId", controllers.DeleteTrip)
 }
