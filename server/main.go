@@ -13,6 +13,7 @@ func main() {
 	configs.ConnectDB()
 
 	routes.TripRoute(app)
+	routes.UserRoute(app)
 
 	app.Listen(":4000")
 }
