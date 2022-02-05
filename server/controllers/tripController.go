@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"net/http"
 	"passport-api/configs"
 	"passport-api/models"
@@ -32,12 +34,38 @@ func CreateTrip(c *fiber.Ctx) error {
 		return c.Status(http.StatusBadRequest).JSON(responses.TripResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
 	}
 
+	payload := struct {
+		Traveler_Id	primitive.ObjectID    `bson:"traveler_Id,omitempty" json:"traveler_id,omitempty"`
+	}{}
+
+	if err := c.BodyParser(&payload); err != nil {
+		return err
+}
+	travlerId := payload.Traveler_Id
+
+
+	filterCursor, err := userCollection.Find(ctx, bson.M{"id": travlerId})
+	if err != nil {
+			log.Fatal(err)
+	}
+	fmt.Println("Filter cursor: ", filterCursor)
+	var usersFiltered []bson.M
+	if err = filterCursor.All(ctx, &usersFiltered); err != nil {
+			log.Fatal(err)
+	}
+	traveler := usersFiltered[0]["username"]
+	fmt.Println(traveler)
+
 	newTrip := models.Trip {
 		Id: primitive.NewObjectID(),
 		Country: trip.Country,
 		Favorite: trip.Favorite,
 		Favorite_Thing: trip.Favorite_Thing,
+		Traveler_Id: travlerId,
+		Traveler: fmt.Sprint(traveler),
 	}
+
+
 
 	result, err := tripCollection.InsertOne(ctx, newTrip)
 	if err != nil {
@@ -79,7 +107,7 @@ func GetTrip(c *fiber.Ctx) error {
 	var trip models.Trip
 	defer cancel()
 
-	// Convert tripId forma  string to a primitive.ObjectID type
+	// Convert tripId from a string to a primitive.ObjectID type
 	// BSON type mongo uses
 	objId, _ := primitive.ObjectIDFromHex(tripId)
 
@@ -108,7 +136,7 @@ if validationErr := validate.Struct(&trip); validationErr != nil {
 		return c.Status(http.StatusBadRequest).JSON(responses.TripResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
 }
 
-update := bson.M{"country": trip.Country, "favorite": trip.Favorite, "favorite_thing": trip.Favorite_Thing}
+update := bson.M{"country": trip.Country, "favorite": trip.Favorite, "favorite_thing": trip.Favorite_Thing, "traveler_id": trip.Traveler_Id, "traveler": trip.Traveler}
 result, err := tripCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
  
 if err != nil {

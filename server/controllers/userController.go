@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 	"passport-api/configs"
@@ -38,19 +37,17 @@ func Register(c *fiber.Ctx) error {
 		Password: user.Password,
 	}
 
-	fmt.Println(newUser.Username)
-
 	filterCursor, err := userCollection.Find(ctx, bson.M{"username": newUser.Username})
-if err != nil {
-    log.Fatal(err)
-}
-var usersFiltered []bson.M
-if err = filterCursor.All(ctx, &usersFiltered); err != nil {
-    log.Fatal(err)
-}
-	if len(usersFiltered) >= 1 {
-		return c.Status(http.StatusBadRequest).JSON(responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": "Username taken"}})
+	if err != nil {
+			log.Fatal(err)
 	}
+	var usersFiltered []bson.M
+	if err = filterCursor.All(ctx, &usersFiltered); err != nil {
+			log.Fatal(err)
+	}
+		if len(usersFiltered) >= 1 {
+			return c.Status(http.StatusBadRequest).JSON(responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": "Username taken"}})
+		}
 
 	result, err := userCollection.InsertOne(ctx, newUser)
 	if err != nil {
