@@ -11,10 +11,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var countryCollection *mongo.Collection = configs.GetCollection(configs.DB, "trips")
+var countryCollection *mongo.Collection = configs.GetCollection(configs.DB, "countries")
 
 func Load() {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Hour)
 	defer cancel()
 
 	countryCodes := [249]string{

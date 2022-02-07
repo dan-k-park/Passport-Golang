@@ -3,7 +3,6 @@ package main
 import (
 	"passport-api/configs"
 	"passport-api/routes"
-	"passport-api/seed"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -18,6 +17,6 @@ func main() {
 	routes.UserRoute(app)
 	routes.CountryRoute(app)
 	
-	seed.Load()
+	// seed.Load()
 	app.Listen(":4000")
 }

@@ -15,37 +15,9 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var countryCollection *mongo.Collection = configs.GetCollection(configs.DB, "trips")
+var countryCollection *mongo.Collection = configs.GetCollection(configs.DB, "countries")
 var validate = validator.New()
 
-func CreateCountry(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	var country models.Country
-	defer cancel()
-
-	// validate request
-	if err := c.BodyParser(&country); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(responses.CountryResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": err.Error()}})
-}
-	// validate required fields
-	if validationErr := validate.Struct(&country); validationErr != nil {
-		return c.Status(http.StatusBadRequest).JSON(responses.CountryResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
-	}
-
-	newCountry := models.Country {
-		Id: primitive.NewObjectID(),
-		Name: country.Name,
-		Code: country.Code,
-		Visits: country.Visits,
-		Favorites: country.Favorites,
-	}
-
-	result, err := countryCollection.InsertOne(ctx, newCountry)
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(responses.CountryResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})	}
-
-	return c.Status(http.StatusCreated).JSON(responses.CountryResponse{Status: http.StatusCreated, Message: "success", Data: &fiber.Map{"data": result}})
-}
 
 func GetAllCountries(c * fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

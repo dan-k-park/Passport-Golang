@@ -7,7 +7,6 @@ import (
 )
 
 func CountryRoute(app *fiber.App) {
-	app.Post("/country", controllers.CreateCountry)
 
 	app.Get("/country/:countryId", controllers.GetCountry)
 
