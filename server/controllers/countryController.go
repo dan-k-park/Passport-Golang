@@ -109,7 +109,7 @@ if validationErr := validate.Struct(&country); validationErr != nil {
 		return c.Status(http.StatusBadRequest).JSON(responses.CountryResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
 }
 
-update := bson.M{"name": country.Name, "capital": country.Capital, "code": country.Code, "visits": country.Visits, "favorites": country.Favorites}
+update := bson.M{"name": country.Name, "code": country.Code, "visits": country.Visits, "favorites": country.Favorites}
 result, err := countryCollection.UpdateOne(ctx, bson.M{"id": objId}, bson.M{"$set": update})
  
 if err != nil {
