@@ -10,7 +10,6 @@ import (
 	"passport-api/responses"
 	"time"
 
-	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -18,7 +17,6 @@ import (
 )
 
 var tripCollection *mongo.Collection = configs.GetCollection(configs.DB, "trips")
-var validate = validator.New()
 
 func CreateTrip(c *fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

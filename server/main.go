@@ -14,6 +14,7 @@ func main() {
 
 	routes.TripRoute(app)
 	routes.UserRoute(app)
+	routes.CountryRoute(app)
 
 	app.Listen(":4000")
 }
