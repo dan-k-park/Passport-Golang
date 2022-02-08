@@ -11,12 +11,11 @@ func main() {
 	app := fiber.New()
 
 	configs.ConnectDB()
-
 	
 	routes.TripRoute(app)
 	routes.UserRoute(app)
 	routes.CountryRoute(app)
-	
+
 	// seed.Load()
 	app.Listen(":4000")
 }

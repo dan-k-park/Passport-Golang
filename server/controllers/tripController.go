@@ -52,7 +52,6 @@ func CreateTrip(c *fiber.Ctx) error {
 			log.Fatal(err)
 	}
 	traveler := usersFiltered[0]["username"]
-	fmt.Println(traveler)
 
 	newTrip := models.Trip {
 		Id: primitive.NewObjectID(),
