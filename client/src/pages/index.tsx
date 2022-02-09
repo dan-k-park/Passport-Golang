@@ -1,9 +1,12 @@
+import { useEffect } from "react";
 import { Layout } from "../components/Layout";
 
 const Home = () => {
+  useEffect(() => {}, []);
+
   return (
     <Layout>
-      <div className="">dsafdfa</div>
+      <ul></ul>
     </Layout>
   );
 };
