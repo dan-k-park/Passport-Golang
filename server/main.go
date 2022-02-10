@@ -13,6 +13,7 @@ func main() {
 	configs.ConnectDB()
 	
 	routes.TripRoute(app)
+	routes.AuthRoute(app)
 	routes.UserRoute(app)
 	routes.CountryRoute(app)
 

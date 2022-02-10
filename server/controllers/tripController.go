@@ -46,7 +46,6 @@ func CreateTrip(c *fiber.Ctx) error {
 	if err != nil {
 			log.Fatal(err)
 	}
-	fmt.Println("Filter cursor: ", filterCursor)
 	var usersFiltered []bson.M
 	if err = filterCursor.All(ctx, &usersFiltered); err != nil {
 			log.Fatal(err)
