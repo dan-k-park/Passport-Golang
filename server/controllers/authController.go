@@ -42,12 +42,17 @@ func Login(c * fiber.Ctx) error {
 	if err = filterCursor.All(ctx, &usersFiltered); err != nil {
 			log.Fatal(err)
 	}
+	if len(usersFiltered) == 0 {
+		return c.Status(fiber.StatusUnauthorized).JSON(responses.AuthResponse{Status: http.StatusUnauthorized, Message: "error", Data: &fiber.Map{
+			"error": "Username not found",
+		}}) 
+	}
 	user := usersFiltered[0]
 
 	if body.Password != user["password"] {
-		c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+		return c.Status(fiber.StatusUnauthorized).JSON(responses.AuthResponse{Status: http.StatusUnauthorized, Message: "error", Data: &fiber.Map{
 			"error": "Incorrect password",
-		})
+		}})
 	}
 	 token := jwt.New(jwt.SigningMethodHS256)
 	 claims := token.Claims.(jwt.MapClaims)
