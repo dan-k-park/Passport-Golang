@@ -3,25 +3,33 @@ import { useEffect, useState } from "react";
 
 const Home = () => {
   const [trips, setTrips] = useState([]);
-  const fetchTrips = async () => {
-    try {
-      const results = await axios.get("http://localhost:4000" + "/trips");
-      setTrips(results.data.data.data);
-      console.log(trips);
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        const results = await axios.get("http://localhost:4000" + "/trips");
+        if (results) {
+          setLoading(false);
+          setTrips(results.data.data.data);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
     fetchTrips();
   }, []);
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   const renderTripItem = (trip: any) => {
+    console.log(trip.country);
     return (
       <li>
         <p>{trip.country}</p>
-        <br />
+
         <p>{trip.traveler}</p>
       </li>
     );
@@ -30,9 +38,7 @@ const Home = () => {
   return (
     <ul>
       {trips.map((trip) => {
-        {
-          renderTripItem(trip);
-        }
+        return renderTripItem(trip);
       })}
     </ul>
   );
