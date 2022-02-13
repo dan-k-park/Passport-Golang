@@ -7,12 +7,12 @@ import (
 )
 
 func TripRoute(app *fiber.App) {
-	app.Post("/trip", controllers.CreateTrip)
+	app.Post("/api/trip", controllers.CreateTrip)
 
-	app.Get("/trip/:tripId", controllers.GetTrip)
+	app.Get("/api/trip/:tripId", controllers.GetTrip)
 
-	app.Put("/trip/:tripId", controllers.EditTrip)
-	app.Delete("/trip/:tripId", controllers.DeleteTrip)
+	app.Put("/api/trip/:tripId", controllers.EditTrip)
+	app.Delete("/api/trip/:tripId", controllers.DeleteTrip)
 
-	app.Get("/trips", controllers.GetAllTrips)
+	app.Get("/api/trips", controllers.GetAllTrips)
 }

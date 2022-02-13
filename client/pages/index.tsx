@@ -8,7 +8,7 @@ const Home = () => {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const results = await axios.get("http://localhost:4000" + "/trips");
+        const results = await axios.get("/api/trips");
         if (results) {
           setLoading(false);
           setTrips(results.data.data.data);
@@ -25,7 +25,6 @@ const Home = () => {
   }
 
   const renderTripItem = (trip: any) => {
-    console.log(trip.country);
     return (
       <li>
         <p>{trip.country}</p>

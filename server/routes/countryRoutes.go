@@ -8,9 +8,9 @@ import (
 
 func CountryRoute(app *fiber.App) {
 
-	app.Get("/country/:countryId", controllers.GetCountry)
+	app.Get("/api/country/:countryId", controllers.GetCountry)
 
-	app.Put("/country/:countryId", controllers.EditCountry)
+	app.Put("/api/country/:countryId", controllers.EditCountry)
 
-	app.Get("/countries", controllers.GetAllCountries)
+	app.Get("/api/countries", controllers.GetAllCountries)
 }
