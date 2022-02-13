@@ -1,10 +1,10 @@
 import React, { useState } from "react";
+import { useRouter } from "next/router";
 
-interface NavbarProps {}
-
-export const Navbar: React.FC<NavbarProps> = ({}) => {
+export const Navbar: React.FC<{}> = ({}) => {
   const [openNav, setOpenNav] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
+  const router = useRouter();
 
   const handleClick = () => {
     setOpenNav(!openNav);
@@ -19,6 +19,10 @@ export const Navbar: React.FC<NavbarProps> = ({}) => {
   };
 
   const renderContent = () => {
+    if (router.route == "/login") {
+      return;
+    }
+
     return loggedIn ? (
       <>
         <div className="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">
