@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
+import NextLink from "next/link";
 
 export const Navbar: React.FC<{}> = ({}) => {
   const [openNav, setOpenNav] = useState(false);
@@ -39,9 +40,9 @@ export const Navbar: React.FC<{}> = ({}) => {
       <div className="hidden md:flex items-center space-x-3 ">
         <div
           onClick={handleLogin}
-          className="py-2 px-2 font-medium text-gray-500 rounded hover:bg-green-500 hover:text-white transition duration-300"
+          className="py-2 px-2 font-semibold text-gray-500 cursor-pointer hover:text-green-500 transition duration-300"
         >
-          Log In
+          <NextLink href="/login">Log In</NextLink>
         </div>
       </div>
     );
@@ -51,12 +52,14 @@ export const Navbar: React.FC<{}> = ({}) => {
     <nav className="bg-white shadow-lg sticky">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between">
-          <div>
-            <a href="#" className="flex items-center py-4 px-2">
-              <span className="font-semibold text-gray-500 text-lg">
-                Passport
-              </span>
-            </a>
+          <div className="cursor-pointer">
+            <NextLink href="/">
+              <div className="flex items-center py-4 px-2">
+                <span className="font-bold text-gray-500 text-lg">
+                  Passport
+                </span>
+              </div>
+            </NextLink>
           </div>
           <div className="hidden md:flex items-center space-x-1">
             {renderContent()}
