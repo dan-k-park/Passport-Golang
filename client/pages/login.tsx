@@ -9,11 +9,15 @@ const Login: React.FC<{}> = ({}) => {
 
   const handleGuh = async (e: any) => {
     e.preventDefault();
-    const res = await axios.post("/api/login", {
-      "username": username.current?.value,
-      "password": password.current?.value,
-    });
-    console.log(res);
+    try {
+      const res = await axios.post("/api/login", {
+        "username": username.current?.value,
+        "password": password.current?.value,
+      });
+      console.log(res);
+    } catch (error) {
+      console.error(error);
+    }
   };
   return (
     <div className="h-screen flex bg-gray-100">

@@ -113,24 +113,47 @@ func Login(c * fiber.Ctx) error {
 		}})
 	}
 
-	 token := jwt.New(jwt.SigningMethodHS256)
-	 claims := token.Claims.(jwt.MapClaims)
-	 claims["username"] = username
-	 claims["exp"] = time.Now().Add(time.Hour * 24 * 7)
+	
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
+		Issuer:    fmt.Sprint(user["id"]),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 7)),
+	})
 
-	 t, err := token.SignedString([]byte(os.Getenv("SECRET")))
+	token, err := claims.SignedString([]byte(os.Getenv("SECRET")))
+
 	if err != nil {
-		return c.SendStatus(fiber.StatusInternalServerError)
+		c.Status(fiber.StatusInternalServerError)
+		return c.JSON(fiber.Map{
+			"message": "could not login",
+		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"token": t,
-		"user": struct {
-			Id       primitive.ObjectID `bson:"id,omitempty" json:"id,omitempty"`
-			Username string             `bson:"username,omitempty" json:"username,omitempty"`		
-		}{
-			Id: user["id"].(primitive.ObjectID),
-			Username: username,
-		},
+	cookie := fiber.Cookie{
+		Name:     "jwt",
+		Value:    token,
+		Expires:  time.Now().Add(time.Hour * 24),
+		HTTPOnly: true,
+	}
+
+	c.Cookie(&cookie)
+
+	return c.JSON(fiber.Map{
+		"message": "success",
 	})
 }	
+
+
+func Logout(c *fiber.Ctx) error {
+	cookie := fiber.Cookie{
+		Name:     "jwt",
+		Value:    "",
+		Expires:  time.Now().Add(-time.Hour),
+		HTTPOnly: true,
+	}
+
+	c.Cookie(&cookie)
+
+	return c.JSON(fiber.Map{
+		"message": "success",
+	})
+}
