@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"context"
-	"log"
 	"net/http"
 	"passport-api/configs"
 	"passport-api/models"
@@ -17,44 +16,6 @@ import (
 
 var userCollection *mongo.Collection = configs.GetCollection(configs.DB, "users")
 
-func Register(c *fiber.Ctx) error {
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	var user models.User
-	defer cancel()
-
-	// validate request
-	if err := c.BodyParser(&user); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": err.Error()}})
-}
-	// validate required fields
-	if validationErr := validate.Struct(&user); validationErr != nil {
-		return c.Status(http.StatusBadRequest).JSON(responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
-	}
-
-	newUser := models.User {
-		Id: primitive.NewObjectID(),
-		Username: user.Username,
-		Password: user.Password,
-	}
-
-	filterCursor, err := userCollection.Find(ctx, bson.M{"username": newUser.Username})
-	if err != nil {
-			log.Fatal(err)
-	}
-	var usersFiltered []bson.M
-	if err = filterCursor.All(ctx, &usersFiltered); err != nil {
-			log.Fatal(err)
-	}
-		if len(usersFiltered) >= 1 {
-			return c.Status(http.StatusBadRequest).JSON(responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": "Username taken"}})
-		}
-
-	result, err := userCollection.InsertOne(ctx, newUser)
-	if err != nil {
-		return c.Status(http.StatusInternalServerError).JSON(responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})	}
-
-	return c.Status(http.StatusCreated).JSON(responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: &fiber.Map{"data": result}})
-}
 
 func GetAllUsers(c * fiber.Ctx) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)

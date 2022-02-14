@@ -2,9 +2,11 @@ package controllers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
+	"passport-api/models"
 	"passport-api/responses"
 	"time"
 
@@ -12,7 +14,63 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"golang.org/x/crypto/bcrypt"
 )
+
+
+func hashPassword(password string) (string, error) {
+	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
+	return string(bytes), err
+}
+
+
+func checkPasswordHash(password, hash string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
+	return err == nil
+}
+
+func Register(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var user models.User
+	defer cancel()
+
+
+	// validate request
+	if err := c.BodyParser(&user); err != nil {
+		return c.Status(http.StatusBadRequest).JSON(responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+}
+	// validate required fields
+	if validationErr := validate.Struct(&user); validationErr != nil {
+		return c.Status(http.StatusBadRequest).JSON(responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": validationErr.Error()}})
+	}
+
+	// Hash password with bcrypt
+	hashedPassword, _ := hashPassword(user.Password)
+
+	newUser := models.User {
+		Id: primitive.NewObjectID(),
+		Username: user.Username,
+		Password: hashedPassword,
+	}
+
+	filterCursor, err := userCollection.Find(ctx, bson.M{"username": newUser.Username})
+	if err != nil {
+			log.Fatal(err)
+	}
+	var usersFiltered []bson.M
+	if err = filterCursor.All(ctx, &usersFiltered); err != nil {
+			log.Fatal(err)
+	}
+		if len(usersFiltered) >= 1 {
+			return c.Status(http.StatusBadRequest).JSON(responses.UserResponse{Status: http.StatusBadRequest, Message: "error", Data: &fiber.Map{"data": "Username taken"}})
+		}
+
+	result, err := userCollection.InsertOne(ctx, newUser)
+	if err != nil {
+		return c.Status(http.StatusInternalServerError).JSON(responses.UserResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})	}
+
+	return c.Status(http.StatusCreated).JSON(responses.UserResponse{Status: http.StatusCreated, Message: "success", Data: &fiber.Map{"data": result}})
+}
 
 
 
@@ -33,9 +91,7 @@ func Login(c * fiber.Ctx) error {
 
 	filterCursor, err := userCollection.Find(ctx, bson.M{"username": username})
 	if err != nil {
-			return c.Status(fiber.StatusUnauthorized).JSON(responses.AuthResponse{Status: http.StatusUnauthorized, Message: "error", Data: &fiber.Map{
-				"error": "Username not found",
-			}})
+		log.Fatal(err)
 	}
 
 	var usersFiltered []bson.M
@@ -49,11 +105,14 @@ func Login(c * fiber.Ctx) error {
 	}
 	user := usersFiltered[0]
 
-	if body.Password != user["password"] {
-		return c.Status(fiber.StatusUnauthorized).JSON(responses.AuthResponse{Status: http.StatusUnauthorized, Message: "error", Data: &fiber.Map{
+	match := checkPasswordHash(body.Password, fmt.Sprint(user["password"]))
+
+	if !match {
+				return c.Status(fiber.StatusUnauthorized).JSON(responses.AuthResponse{Status: http.StatusUnauthorized, Message: "error", Data: &fiber.Map{
 			"error": "Incorrect password",
 		}})
 	}
+
 	 token := jwt.New(jwt.SigningMethodHS256)
 	 claims := token.Claims.(jwt.MapClaims)
 	 claims["username"] = username
