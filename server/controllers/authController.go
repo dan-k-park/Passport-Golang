@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"passport-api/configs"
 	"passport-api/models"
 	"passport-api/responses"
 	"time"
@@ -13,10 +14,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
-
+var userCollection *mongo.Collection = configs.GetCollection(configs.DB, "users")
 
 func hashPassword(password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
@@ -48,7 +49,6 @@ func Register(c *fiber.Ctx) error {
 	hashedPassword, _ := hashPassword(user.Password)
 
 	newUser := models.User {
-		Id: primitive.NewObjectID(),
 		Username: user.Username,
 		Password: hashedPassword,
 	}
@@ -115,7 +115,7 @@ func Login(c * fiber.Ctx) error {
 
 	
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.RegisteredClaims{
-		Issuer:    fmt.Sprint(user["id"]),
+		Issuer:    fmt.Sprint(user["username"]), // maybe not the best idea but can't query with ids since i don't have access to them
 		ExpiresAt: jwt.NewNumericDate(time.Now().Add(time.Hour * 24 * 7)),
 	})
 
@@ -156,4 +156,33 @@ func Logout(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"message": "success",
 	})
+}
+
+func User(c *fiber.Ctx) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	var user models.User
+
+	defer cancel()
+	cookie := c.Cookies("jwt")
+
+	token, err := jwt.ParseWithClaims(cookie, &jwt.RegisteredClaims{}, func(token *jwt.Token) (interface{}, error) {
+		return []byte(os.Getenv("SECRET")), nil
+	})
+
+	if err != nil {
+		c.Status(fiber.StatusUnauthorized)
+		return c.JSON(fiber.Map{
+			"message": "unauthenticated",
+		})
+	}
+
+	claims := token.Claims.(*jwt.RegisteredClaims)
+
+	userCollection.FindOne(ctx, bson.M{"username": claims.Issuer}).Decode(&user)
+
+	if err != nil {
+			return c.Status(http.StatusInternalServerError).JSON(responses.TripResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
+	}
+
+	return c.JSON(user)
 }

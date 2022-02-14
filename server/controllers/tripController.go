@@ -53,7 +53,6 @@ func CreateTrip(c *fiber.Ctx) error {
 	traveler := usersFiltered[0]["username"]
 
 	newTrip := models.Trip {
-		Id: primitive.NewObjectID(),
 		Country: trip.Country,
 		Favorite: trip.Favorite,
 		Favorite_Thing: trip.Favorite_Thing,
@@ -106,6 +105,7 @@ func GetTrip(c *fiber.Ctx) error {
 	// Convert tripId from a string to a primitive.ObjectID type
 	// BSON type mongo uses
 	objId, _ := primitive.ObjectIDFromHex(tripId)
+	fmt.Println(objId)
 
 	err := tripCollection.FindOne(ctx, bson.M{"id": objId}).Decode(&trip)
 	if err != nil {

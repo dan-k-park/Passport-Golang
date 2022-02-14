@@ -8,5 +8,7 @@ import (
 
 func AuthRoute(app *fiber.App) {
 	app.Post("/api/login", controllers.Login)
+	app.Post("/api/logout", controllers.Logout)
 	app.Post("/api/register", controllers.Register)
+	app.Get("/api/user", controllers.User)
 }
