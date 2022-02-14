@@ -53,6 +53,7 @@ func CreateTrip(c *fiber.Ctx) error {
 	traveler := usersFiltered[0]["username"]
 
 	newTrip := models.Trip {
+		Id: primitive.NewObjectID(),
 		Country: trip.Country,
 		Favorite: trip.Favorite,
 		Favorite_Thing: trip.Favorite_Thing,

@@ -1,11 +1,21 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
+import { checkLoginStatus } from "../services/Queries";
+import axios from "axios";
 
 export const Navbar: React.FC<{}> = ({}) => {
   const [openNav, setOpenNav] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    // check if a user is logged in
+    const isLoggedIn = checkLoginStatus();
+    if (!!isLoggedIn) {
+      setLoggedIn(true);
+    }
+  }, []);
 
   const handleClick = () => {
     setOpenNav(!openNav);
@@ -15,8 +25,13 @@ export const Navbar: React.FC<{}> = ({}) => {
     setLoggedIn(true);
   };
 
-  const handleLogout = () => {
-    setLoggedIn(false);
+  const handleLogout = async () => {
+    try {
+      await axios.post("/api/logout");
+      setLoggedIn(false);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const renderContent = () => {
@@ -31,7 +46,7 @@ export const Navbar: React.FC<{}> = ({}) => {
         </div>
         <div
           onClick={handleLogout}
-          className="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300"
+          className="py-4 px-2 text-gray-500 font-semibold cursor-pointer hover:text-green-500 transition duration-300"
         >
           Logout
         </div>

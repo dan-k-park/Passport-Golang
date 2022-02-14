@@ -36,7 +36,7 @@ const Home = () => {
 
   return (
     <ul>
-      {trips.map((trip) => {
+      {trips?.map((trip) => {
         return renderTripItem(trip);
       })}
     </ul>
