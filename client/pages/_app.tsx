@@ -1,7 +1,7 @@
 import "../styles/index.scss";
 import type { AppProps } from "next/app";
 import { Layout } from "../components/Layout";
-import { AuthProvider } from "../context/AuthProvider";
+import { AuthProvider } from "../context/AuthContext";
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

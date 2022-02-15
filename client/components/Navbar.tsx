@@ -1,34 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
-import { checkLoginStatus } from "../services/Queries";
 import axios from "axios";
+import { useAuthContext } from "../context/AuthContext";
 
 export const Navbar: React.FC<{}> = ({}) => {
+  const { user, logout } = useAuthContext();
   const [openNav, setOpenNav] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    // check if a user is logged in
-    const isLoggedIn = checkLoginStatus();
-    if (!!isLoggedIn) {
-      setLoggedIn(true);
-    }
-  }, []);
 
   const handleClick = () => {
     setOpenNav(!openNav);
   };
 
-  const handleLogin = () => {
-    setLoggedIn(true);
-  };
-
   const handleLogout = async () => {
     try {
       await axios.post("/api/logout");
-      setLoggedIn(false);
+      logout();
     } catch (error) {
       console.error(error);
     }
@@ -39,7 +27,7 @@ export const Navbar: React.FC<{}> = ({}) => {
       return;
     }
 
-    return loggedIn ? (
+    return user ? (
       <>
         <div className="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">
           My Trips
@@ -53,10 +41,7 @@ export const Navbar: React.FC<{}> = ({}) => {
       </>
     ) : (
       <div className="hidden md:flex items-center space-x-3 ">
-        <div
-          onClick={handleLogin}
-          className="py-2 px-2 font-semibold text-gray-500 cursor-pointer hover:text-green-500 transition duration-300"
-        >
+        <div className="py-2 px-2 font-semibold text-gray-500 cursor-pointer hover:text-green-500 transition duration-300">
           <NextLink href="/login">Log In</NextLink>
         </div>
       </div>
@@ -108,7 +93,7 @@ export const Navbar: React.FC<{}> = ({}) => {
                 Trips
               </div>
             </li>
-            {loggedIn ? (
+            {user ? (
               <li>
                 <div
                   onClick={handleLogout}
@@ -119,10 +104,7 @@ export const Navbar: React.FC<{}> = ({}) => {
               </li>
             ) : (
               <li>
-                <div
-                  onClick={handleLogin}
-                  className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"
-                >
+                <div className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">
                   Log In
                 </div>
               </li>
