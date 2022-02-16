@@ -9,7 +9,10 @@ interface AuthInterface {
 }
 
 const INITIAL_STATE: AuthInterface = {
-  user: isServer() ? JSON.parse(localStorage.getItem("user") || "{}") : "{}", // This is absurd
+  user:
+    typeof window !== "undefined"
+      ? JSON.parse(localStorage.getItem("user") || "{}")
+      : "{}", // This is absurd
   login: () => {},
   logout: () => {},
 };
@@ -24,7 +27,7 @@ export const AuthProvider: React.FC<React.ReactNode> = ({ children }) => {
   const [user, setUser] = useState({});
 
   useEffect(() => {
-    if (isServer()) {
+    if (typeof window !== "undefined") {
       localStorage.setItem("user", JSON.stringify(user));
     }
   }, [user]);
