@@ -1,13 +1,12 @@
 import axios from "axios";
 import React, { useContext, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-import { useAuthContext } from "../context/AuthContext";
-import { isServer } from "../utils/isServer";
+
+import { isNotServer } from "../utils/isNotServer";
 
 const Login: React.FC<{}> = ({}) => {
   const username = useRef<HTMLInputElement | null>(null);
   const password = useRef<HTMLInputElement | null>(null);
-  const { user, login } = useAuthContext();
   const router = useRouter();
 
   const handleGuh = async (e: any) => {
@@ -17,15 +16,16 @@ const Login: React.FC<{}> = ({}) => {
         "username": username.current?.value,
         "password": password.current?.value,
       });
-      if (res.data.message == "success") {
-        console.log(res);
-        login();
+      if (res.data.message == "success" && isNotServer()) {
+        // object with username and hashed password
+        localStorage.setItem("loggedIn", "yes");
         router.push("/");
       }
     } catch (error) {
       console.error(error);
     }
   };
+
   return (
     <div className="h-screen flex bg-gray-100">
       <div className="w-full max-w-md m-auto bg-white rounded-lg border border-gray-200 shadow-default py-10 px-16">

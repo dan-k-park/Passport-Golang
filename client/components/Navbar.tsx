@@ -2,12 +2,18 @@ import React, { useState, useEffect, useContext } from "react";
 import { useRouter } from "next/router";
 import NextLink from "next/link";
 import axios from "axios";
-import { useAuthContext } from "../context/AuthContext";
+import { isNotServer } from "../utils/isNotServer";
 
 export const Navbar: React.FC<{}> = ({}) => {
-  const { user, logout } = useAuthContext();
   const [openNav, setOpenNav] = useState(false);
+  const [loggedIn, setLoggedIn] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (isNotServer() && localStorage.getItem("loggedIn") == "yes") {
+      setLoggedIn(true);
+    }
+  }, []);
 
   const handleClick = () => {
     setOpenNav(!openNav);
@@ -16,7 +22,7 @@ export const Navbar: React.FC<{}> = ({}) => {
   const handleLogout = async () => {
     try {
       await axios.post("/api/logout");
-      logout();
+      setLoggedIn(false);
     } catch (error) {
       console.error(error);
     }
@@ -27,7 +33,7 @@ export const Navbar: React.FC<{}> = ({}) => {
       return;
     }
 
-    return user ? (
+    return loggedIn ? (
       <>
         <div className="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">
           My Trips
@@ -93,7 +99,7 @@ export const Navbar: React.FC<{}> = ({}) => {
                 Trips
               </div>
             </li>
-            {user ? (
+            {loggedIn ? (
               <li>
                 <div
                   onClick={handleLogout}

@@ -184,5 +184,5 @@ func User(c *fiber.Ctx) error {
 			return c.Status(http.StatusInternalServerError).JSON(responses.TripResponse{Status: http.StatusInternalServerError, Message: "error", Data: &fiber.Map{"data": err.Error()}})
 	}
 
-	return c.JSON(user)
+	return c.JSON(user.Username)
 }
