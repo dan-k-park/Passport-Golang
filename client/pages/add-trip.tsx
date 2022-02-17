@@ -1,7 +1,17 @@
 import React from "react";
-import { Formik } from "formik";
+import { useFormik } from "formik";
 
 const AddTrip: React.FC<{}> = ({}) => {
+  const formik = useFormik({
+    initialValues: {
+      country: "",
+      favorite: false,
+      favoriteThing: "",
+    },
+    onSubmit: (values) => {
+      console.log(JSON.stringify(values));
+    },
+  });
   return (
     <div className="container mx-auto">
       <div className="max-w-xl p-5 mx-auto my-10 bg-white rounded-md shadow-sm">
@@ -14,14 +24,16 @@ const AddTrip: React.FC<{}> = ({}) => {
           </p>
         </div>
         <div>
-          <form action="" method="POST">
+          <form action="" onSubmit={formik.handleSubmit}>
             <div className="mb-6">
               <label className="block mb-2 text-sm text-gray-600">
                 Country
               </label>
               <input
                 type="text"
-                name="name"
+                name="country"
+                onChange={formik.handleChange}
+                value={formik.values.country}
                 placeholder="Where did you go?"
                 required
                 className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md  focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300"
@@ -30,7 +42,8 @@ const AddTrip: React.FC<{}> = ({}) => {
             <div className="flex items-center w-1/3 mb-6">
               <input
                 type="checkbox"
-                name="remember"
+                name="favorite"
+                onChange={formik.handleChange}
                 className="w-5 h-5 border border-gray-300 rounded-sm outline-none cursor-pointer"
               />
               <label className="ml-2 text-sm">Add to Favorites</label>
@@ -42,13 +55,15 @@ const AddTrip: React.FC<{}> = ({}) => {
               </label>
 
               <textarea
-                name="message"
+                name="favoriteThing"
+                onChange={formik.handleChange}
+                value={formik.values.favoriteThing}
                 placeholder="What did you enjoy the most there?"
                 className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md  focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300"
                 required
               ></textarea>
             </div>
-            <div className="m-4">
+            {/* <div className="m-4">
               <label className="inline-block mb-2 text-gray-500">
                 Add a Photo
               </label>
@@ -76,7 +91,7 @@ const AddTrip: React.FC<{}> = ({}) => {
                   <input type="file" className="opacity-0" />
                 </label>
               </div>
-            </div>
+            </div> */}
             <div className="mb-6">
               <button
                 type="submit"
