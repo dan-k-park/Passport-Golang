@@ -4,6 +4,8 @@ import NextLink from "next/link";
 import axios from "axios";
 import { isNotServer } from "../utils/isNotServer";
 
+const navLinkClasses = `py-4 px-2 text-gray-500 font-semibold cursor-pointer hover:text-green-500 transition duration-300`;
+
 export const Navbar: React.FC<{}> = ({}) => {
   const [openNav, setOpenNav] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false);
@@ -35,19 +37,17 @@ export const Navbar: React.FC<{}> = ({}) => {
 
     return loggedIn ? (
       <>
-        <div className="py-4 px-2 text-gray-500 font-semibold hover:text-green-500 transition duration-300">
-          My Trips
+        <div className={navLinkClasses}>My Trips</div>
+        <div className={navLinkClasses}>
+          <NextLink href="/add-trip">Add Trip</NextLink>
         </div>
-        <div
-          onClick={handleLogout}
-          className="py-4 px-2 text-gray-500 font-semibold cursor-pointer hover:text-green-500 transition duration-300"
-        >
+        <div onClick={handleLogout} className={navLinkClasses}>
           Logout
         </div>
       </>
     ) : (
       <div className="hidden md:flex items-center space-x-3 ">
-        <div className="py-2 px-2 font-semibold text-gray-500 cursor-pointer hover:text-green-500 transition duration-300">
+        <div className={navLinkClasses}>
           <NextLink href="/login">Log In</NextLink>
         </div>
       </div>
