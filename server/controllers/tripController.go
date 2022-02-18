@@ -33,16 +33,16 @@ func CreateTrip(c *fiber.Ctx) error {
 	}
 
 	payload := struct {
-		Traveler_Id	primitive.ObjectID    `bson:"traveler_Id,omitempty" json:"traveler_id,omitempty"`
+		Traveler	string    `bson:"traveler,omitempty" json:"traveler,omitempty"`
 	}{}
 
 	if err := c.BodyParser(&payload); err != nil {
 		return err
 }
-	travlerId := payload.Traveler_Id
+	traveler := payload.Traveler
 
 
-	filterCursor, err := userCollection.Find(ctx, bson.M{"id": travlerId})
+	filterCursor, err := userCollection.Find(ctx, bson.M{"username": traveler})
 	if err != nil {
 			log.Fatal(err)
 	}
@@ -50,15 +50,16 @@ func CreateTrip(c *fiber.Ctx) error {
 	if err = filterCursor.All(ctx, &usersFiltered); err != nil {
 			log.Fatal(err)
 	}
-	traveler := usersFiltered[0]["username"]
+	// hard code for now, lots to fix on backend
+	travelerId := "620a4495ddf79724cc901808"
 
 	newTrip := models.Trip {
 		Id: primitive.NewObjectID(),
 		Country: trip.Country,
 		Favorite: trip.Favorite,
 		Favorite_Thing: trip.Favorite_Thing,
-		Traveler_Id: travlerId,
-		Traveler: fmt.Sprint(traveler),
+		Traveler_Id: travelerId,
+		Traveler: traveler,
 	}
 
 

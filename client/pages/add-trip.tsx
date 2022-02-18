@@ -1,15 +1,30 @@
 import React from "react";
 import { useFormik } from "formik";
+import { isNotServer } from "../utils/isNotServer";
+import axios from "axios";
+import { useRouter } from "next/router";
 
 const AddTrip: React.FC<{}> = ({}) => {
+  const router = useRouter();
   const formik = useFormik({
     initialValues: {
       country: "",
-      favorite: false,
       favoriteThing: "",
+      toggle: false,
     },
-    onSubmit: (values) => {
-      console.log(JSON.stringify(values));
+    onSubmit: async (values) => {
+      if (isNotServer()) {
+        console.log(JSON.stringify(values));
+        const res = await axios.post("/api/trip", {
+          "country": values.country,
+          "favorite": values.toggle,
+          "favorite_thing": values.favoriteThing,
+          "traveler": "daniel",
+        });
+        if (res.status == 201) {
+          router.push("/");
+        }
+      }
     },
   });
   return (
@@ -42,8 +57,8 @@ const AddTrip: React.FC<{}> = ({}) => {
             <div className="flex items-center w-1/3 mb-6">
               <input
                 type="checkbox"
-                name="favorite"
-                onChange={formik.handleChange}
+                name="toggle"
+                onClick={formik.handleChange}
                 className="w-5 h-5 border border-gray-300 rounded-sm outline-none cursor-pointer"
               />
               <label className="ml-2 text-sm">Add to Favorites</label>

@@ -1,7 +1,6 @@
 import axios from "axios";
 import React, { useContext, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
-
 import { isNotServer } from "../utils/isNotServer";
 
 const Login: React.FC<{}> = ({}) => {
@@ -18,7 +17,9 @@ const Login: React.FC<{}> = ({}) => {
       });
       if (res.data.message == "success" && isNotServer()) {
         // object with username and hashed password
-        localStorage.setItem("loggedIn", "yes");
+        const user = await axios.get("/api/user");
+        console.log(user);
+        localStorage.setItem("user", JSON.stringify(user.data.username));
         router.push("/");
       }
     } catch (error) {

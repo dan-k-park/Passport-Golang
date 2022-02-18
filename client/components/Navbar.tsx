@@ -8,14 +8,9 @@ const navLinkClasses = `py-4 px-2 text-gray-500 font-semibold cursor-pointer hov
 
 export const Navbar: React.FC<{}> = ({}) => {
   const [openNav, setOpenNav] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
-  const router = useRouter();
 
-  useEffect(() => {
-    if (isNotServer() && localStorage.getItem("loggedIn") == "yes") {
-      setLoggedIn(true);
-    }
-  }, []);
+  const router = useRouter();
+  const ls = isNotServer() ? localStorage : null;
 
   const handleClick = () => {
     setOpenNav(!openNav);
@@ -24,7 +19,7 @@ export const Navbar: React.FC<{}> = ({}) => {
   const handleLogout = async () => {
     try {
       await axios.post("/api/logout");
-      setLoggedIn(false);
+      ls?.setItem("user", "");
     } catch (error) {
       console.error(error);
     }
@@ -35,7 +30,7 @@ export const Navbar: React.FC<{}> = ({}) => {
       return;
     }
 
-    return loggedIn ? (
+    return ls?.getItem("user") ? (
       <>
         <div className={navLinkClasses}>My Trips</div>
         <div className={navLinkClasses}>
@@ -99,7 +94,7 @@ export const Navbar: React.FC<{}> = ({}) => {
                 Trips
               </div>
             </li>
-            {loggedIn ? (
+            {ls?.getItem("user") ? (
               <li>
                 <div
                   onClick={handleLogout}
