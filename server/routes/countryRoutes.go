@@ -12,5 +12,7 @@ func CountryRoute(app *fiber.App) {
 
 	app.Put("/api/country/:countryId", controllers.EditCountry)
 
+	app.Get("/api/query", controllers.SearchCountry)
+
 	app.Get("/api/countries", controllers.GetAllCountries)
 }

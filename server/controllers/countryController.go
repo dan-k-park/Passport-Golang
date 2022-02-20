@@ -99,3 +99,10 @@ if result.MatchedCount == 1 {
 
 return c.Status(http.StatusOK).JSON(responses.CountryResponse{Status: http.StatusOK, Message: "success", Data: &fiber.Map{"data": updatedCountry}})
 }
+
+func SearchCountry(c *fiber.Ctx) error {
+
+	return c.Status(http.StatusOK).JSON(
+		"hi",
+)
+}
