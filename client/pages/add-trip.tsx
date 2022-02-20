@@ -6,18 +6,36 @@ import { useRouter } from "next/router";
 
 const AddTrip: React.FC<{}> = ({}) => {
   const [query, setQuery] = useState("");
-  const [data, setData] = useState([]);
+  const [countries, setCountries] = useState<any[]>([]); // avoid property does not include type never
+  const [searchResults, setSearchResults] = useState<any[]>([]);
   const router = useRouter();
 
   // Consider putting this in context since I'll probably need the countries elsewhere as well
   useEffect(() => {
     const fetchCountries = async () => {
       const res = await axios.get("/api/countries");
-      setData(res.data.data.data);
+      const countryNamesArray = res.data.data.data.map((countryObj: any) => {
+        return countryObj.name;
+      });
+      setCountries(countryNamesArray);
     };
 
     fetchCountries();
   }, []);
+
+  // Alter query results
+  useEffect(() => {
+    console.log(query);
+    if (!query.length) {
+      setSearchResults([]);
+    }
+    countries.forEach((country) => {
+      if (country.toLowerCase().includes(query.toLowerCase())) {
+        setSearchResults([...searchResults, country]);
+      }
+    });
+    console.log(searchResults);
+  }, [query]);
 
   const renderSearchResults = () => {
     return (
@@ -37,7 +55,6 @@ const AddTrip: React.FC<{}> = ({}) => {
         // Nothing was actually borken, just didn't like seeing the linter
         const valuesObj: any = values;
         setQuery(valuesObj.country);
-        console.log(query);
       }
     }, [values, submitForm]);
     return null;
