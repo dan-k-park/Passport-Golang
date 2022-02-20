@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Formik, Form, useFormikContext, Field } from "formik";
 import { isNotServer } from "../utils/isNotServer";
+import { matchSorter } from "match-sorter";
 import axios from "axios";
 import { useRouter } from "next/router";
 
@@ -23,26 +24,27 @@ const AddTrip: React.FC<{}> = ({}) => {
     fetchCountries();
   }, []);
 
-  // Alter query results
   useEffect(() => {
-    console.log(query);
-    if (!query.length) {
+    if (query.length == 0) {
       setSearchResults([]);
+      console.log(searchResults);
     }
-    countries.forEach((country) => {
-      if (country.toLowerCase().includes(query.toLowerCase())) {
-        setSearchResults([...searchResults, country]);
-      }
-    });
-    console.log(searchResults);
+  }, [query]);
+
+  useEffect(() => {
+    setSearchResults(matchSorter(countries, query));
   }, [query]);
 
   const renderSearchResults = () => {
     return (
-      <ul className="absolute bg-white border border-gray-100 w-full z-99">
-        <li className="pl-8 pr-2 py-1 border-b-2 border-gray-100 relative cursor-pointer hover:bg-yellow-50 hover:text-gray-900">
-          <b>Gar</b>dameer - Italië
-        </li>
+      <ul className="absolute bg-white border border-gray-100 w-full max-h-40 overflow-y-scroll z-99">
+        {searchResults.map((result) => {
+          return (
+            <li className="pl-8 py-2 relative cursor-pointer hover:bg-yellow-50 hover:text-gray-900">
+              {result}
+            </li>
+          );
+        })}
       </ul>
     );
   };
