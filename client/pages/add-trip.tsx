@@ -5,10 +5,11 @@ import axios from "axios";
 import { useRouter } from "next/router";
 
 const AddTrip: React.FC<{}> = ({}) => {
-  const [query, setQuery] = useState("second");
+  const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
   const router = useRouter();
 
+  // Consider putting this in context since I'll probably need the countries elsewhere as well
   useEffect(() => {
     const fetchCountries = async () => {
       const res = await axios.get("/api/countries");
@@ -31,7 +32,13 @@ const AddTrip: React.FC<{}> = ({}) => {
   const FormObserver = () => {
     const { values, submitForm } = useFormikContext();
     useEffect(() => {
-      console.log(values);
+      if (typeof values === "object") {
+        // Doing this ridiculousness to fix "property country does not exist on type {}"
+        // Nothing was actually borken, just didn't like seeing the linter
+        const valuesObj: any = values;
+        setQuery(valuesObj.country);
+        console.log(query);
+      }
     }, [values, submitForm]);
     return null;
   };
