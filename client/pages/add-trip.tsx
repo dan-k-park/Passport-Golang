@@ -9,12 +9,7 @@ const AddTrip: React.FC<{}> = ({}) => {
   const [query, setQuery] = useState("");
   const [countries, setCountries] = useState<any[]>([]); // avoid property does not include type never
   const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [clickedResult, setClickedResult] = useState("");
   const router = useRouter();
-
-  useEffect(() => {
-    console.log(clickedResult);
-  }, [clickedResult]);
 
   // Consider putting this in context since I'll probably need the countries elsewhere as well
   useEffect(() => {
@@ -31,6 +26,7 @@ const AddTrip: React.FC<{}> = ({}) => {
 
   useEffect(() => {
     if (query.length == 0) {
+      console.log("hi");
       setSearchResults([]);
     }
   }, [query]);
@@ -39,32 +35,26 @@ const AddTrip: React.FC<{}> = ({}) => {
     setSearchResults(matchSorter(countries, query));
   }, [query]);
 
+  const handleResultClick = (result: string) => {
+    setQuery(result);
+  };
+
   const renderSearchResults = () => {
     return (
       <>
-        <Field
-          type="text"
-          name="country"
-          placeholder="Where did you go?"
-          required
-          className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md  focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300"
-        />
-        <Field
-          as="ul"
-          className="absolute bg-white border border-gray-100 w-full max-h-40 overflow-y-scroll z-99"
-        >
+        <ul className="absolute bg-white border border-gray-100 w-full max-h-40 overflow-y-scroll z-99">
           {searchResults.map((result) => {
             return (
-              <Field
+              <li
                 key={result}
-                as="li"
+                onClick={() => setQuery(result)}
                 className="pl-8 py-2 relative cursor-pointer hover:bg-yellow-50 hover:text-gray-900"
               >
                 {result}
-              </Field>
+              </li>
             );
           })}
-        </Field>
+        </ul>
       </>
     );
   };
@@ -73,7 +63,6 @@ const AddTrip: React.FC<{}> = ({}) => {
     const { values, submitForm } = useFormikContext();
     useEffect(() => {
       if (typeof values === "object") {
-        setClickedResult("");
         // Doing this ridiculousness to fix "property country does not exist on type {}"
         // Nothing was actually borken, just didn't like seeing the linter
         const valuesObj: any = values;
@@ -99,7 +88,7 @@ const AddTrip: React.FC<{}> = ({}) => {
             onSubmit={async (values) => {
               if (isNotServer()) {
                 const res = await axios.post("/api/trip", {
-                  "country": clickedResult ? clickedResult : values.country,
+                  "country": values.country,
                   "favorite": values.toggle,
                   "favorite_thing": values.favoriteThing,
                   "traveler": "daniel",
@@ -116,7 +105,17 @@ const AddTrip: React.FC<{}> = ({}) => {
                 <label className="block mb-2 text-sm text-gray-600">
                   Country
                 </label>
-                <div className="relative">{renderSearchResults()}</div>
+                <div className="relative">
+                  <Field
+                    type="text"
+                    name="country"
+                    value={`${query}`}
+                    placeholder="Where did you go?"
+                    required
+                    className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md  focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300"
+                  />
+                  {query.length ? renderSearchResults() : null}
+                </div>
               </div>
               <div className="flex items-center w-1/3 mb-6">
                 <Field
