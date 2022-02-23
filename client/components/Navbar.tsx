@@ -32,7 +32,6 @@ export const Navbar: React.FC<{}> = ({}) => {
 
     return ls?.getItem("user") ? (
       <>
-        <div className={navLinkClasses}>My Trips</div>
         <div className={navLinkClasses}>
           <NextLink href="/add-trip">Add Trip</NextLink>
         </div>
