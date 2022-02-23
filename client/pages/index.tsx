@@ -1,5 +1,6 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Hero } from "../components/Hero";
 
 const Home = () => {
   const [trips, setTrips] = useState([]);
@@ -34,13 +35,7 @@ const Home = () => {
     );
   };
 
-  return (
-    <ul>
-      {trips?.map((trip) => {
-        return renderTripItem(trip);
-      })}
-    </ul>
-  );
+  return <Hero />;
 };
 
 export default Home;
