@@ -1,14 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { Formik, Form, useFormikContext, Field } from "formik";
+import React, { useEffect, useRef, useState } from "react";
 import { isNotServer } from "../utils/isNotServer";
 import { matchSorter } from "match-sorter";
 import axios from "axios";
 import { useRouter } from "next/router";
 
+const countryInputClass =
+  "w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md  focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300";
+
 const AddTrip: React.FC<{}> = ({}) => {
   const [query, setQuery] = useState("");
-  const [countries, setCountries] = useState<any[]>([]); // avoid property does not include type never
+  const [favorite, setFavorite] = useState(false);
+  const [favoriteThing, setFavoriteThing] = useState("");
+  const [selectedCountry, setSelectedCountry] = useState("");
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [countries, setCountries] = useState<any[]>([]); // avoid property does not include type never
+
   const router = useRouter();
 
   // Consider putting this in context since I'll probably need the countries elsewhere as well
@@ -25,21 +31,14 @@ const AddTrip: React.FC<{}> = ({}) => {
   }, []);
 
   useEffect(() => {
-    if (query.length == 0) {
-      console.log("hi");
-      setSearchResults([]);
-    }
-  }, [query]);
-
-  useEffect(() => {
+    setSelectedCountry("");
     setSearchResults(matchSorter(countries, query));
   }, [query]);
 
-  const handleResultClick = (result: string) => {
-    setQuery(result);
-  };
-
   const renderSearchResults = () => {
+    if (selectedCountry.length) {
+      return;
+    }
     return (
       <>
         <ul className="absolute bg-white border border-gray-100 w-full max-h-40 overflow-y-scroll z-99">
@@ -47,8 +46,8 @@ const AddTrip: React.FC<{}> = ({}) => {
             return (
               <li
                 key={result}
-                onClick={() => setQuery(result)}
                 className="pl-8 py-2 relative cursor-pointer hover:bg-yellow-50 hover:text-gray-900"
+                onClick={() => setSelectedCountry(result)}
               >
                 {result}
               </li>
@@ -59,17 +58,22 @@ const AddTrip: React.FC<{}> = ({}) => {
     );
   };
 
-  const FormObserver = () => {
-    const { values, submitForm } = useFormikContext();
-    useEffect(() => {
-      if (typeof values === "object") {
-        // Doing this ridiculousness to fix "property country does not exist on type {}"
-        // Nothing was actually borken, just didn't like seeing the linter
-        const valuesObj: any = values;
-        setQuery(valuesObj.country);
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    console.log("guh");
+    const newTrip = {
+      "country": selectedCountry,
+      "favorite": favorite,
+      "favorite_thing": favoriteThing,
+      "traveler": "daniel",
+    };
+
+    if (isNotServer()) {
+      const res = await axios.post("/api/trip", newTrip);
+      if (res.status == 201) {
+        router.push("/");
       }
-    }, [values, submitForm]);
-    return null;
+    }
   };
   return (
     <div className="container mx-auto">
@@ -83,63 +87,47 @@ const AddTrip: React.FC<{}> = ({}) => {
           </p>
         </div>
         <div>
-          <Formik
-            initialValues={{ country: "", favoriteThing: "", toggle: false }}
-            onSubmit={async (values) => {
-              if (isNotServer()) {
-                const res = await axios.post("/api/trip", {
-                  "country": values.country,
-                  "favorite": values.toggle,
-                  "favorite_thing": values.favoriteThing,
-                  "traveler": "daniel",
-                });
-                if (res.status == 201) {
-                  router.push("/");
-                }
-              }
-            }}
-          >
-            <Form action="" autoComplete="off">
-              <FormObserver />
-              <div className="mb-6">
-                <label className="block mb-2 text-sm text-gray-600">
-                  Country
-                </label>
-                <div className="relative">
-                  <Field
-                    type="text"
-                    name="country"
-                    value={`${query}`}
-                    placeholder="Where did you go?"
-                    required
-                    className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md  focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300"
-                  />
-                  {query.length ? renderSearchResults() : null}
-                </div>
-              </div>
-              <div className="flex items-center w-1/3 mb-6">
-                <Field
-                  type="checkbox"
-                  name="toggle"
-                  className="w-5 h-5 border border-gray-300 rounded-sm outline-none cursor-pointer"
-                />
-                <label className="ml-2 text-sm">Add to Favorites</label>
-              </div>
-              <div className="mb-6">
-                <label className="block mb-2 text-sm text-gray-600">
-                  Favorite thing about{" "}
-                  <b>have this dynamically render to the name of the country</b>
-                </label>
-
-                <Field
-                  name="favoriteThing"
-                  placeholder="What did you enjoy the most there?"
-                  as="textarea"
-                  className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md  focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300"
+          <form action="" autoComplete="off" onSubmit={handleSubmit}>
+            <div className="mb-6">
+              <label className="block mb-2 text-sm text-gray-600">
+                Country
+              </label>
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="Where did you go?"
+                  onChange={(e) => setQuery(e.target.value)}
+                  value={selectedCountry.length ? selectedCountry : query}
                   required
+                  className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md  focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300"
                 />
+                {query.length ? renderSearchResults() : null}
               </div>
-              {/* <div className="m-4">
+            </div>
+            <div className="flex items-center w-1/3 mb-6">
+              <input
+                type="checkbox"
+                name="toggle"
+                onChange={() => setFavorite(!favorite)}
+                className="w-5 h-5 border border-gray-300 rounded-sm outline-none cursor-pointer"
+              />
+              <label className="ml-2 text-sm">Add to Favorites</label>
+            </div>
+            <div className="mb-6">
+              <label className="block mb-2 text-sm text-gray-600">
+                Favorite thing about{" "}
+                {selectedCountry.length ? selectedCountry : "Guh Land"}
+              </label>
+
+              <textarea
+                name="favoriteThing"
+                placeholder="What did you enjoy the most there?"
+                onChange={(e) => setFavoriteThing(e.target.value)}
+                className="w-full px-3 py-2 placeholder-gray-300 border border-gray-300 rounded-md  focus:outline-none focus:ring focus:ring-indigo-100 focus:border-indigo-300"
+                required
+              />
+            </div>
+            {/* <div className="m-4">
               <label className="inline-block mb-2 text-gray-500">
                 Add a Photo
               </label>
@@ -168,17 +156,15 @@ const AddTrip: React.FC<{}> = ({}) => {
                 </label>
               </div>
             </div> */}
-              <div className="mb-6">
-                <button
-                  type="submit"
-                  className="w-full px-2 py-4 text-white bg-indigo-500 rounded-md  focus:bg-indigo-600 focus:outline-none"
-                >
-                  Add to Passport
-                </button>
-              </div>
-              <FormObserver />
-            </Form>
-          </Formik>
+            <div className="mb-6">
+              <button
+                type="submit"
+                className="w-full px-2 py-4 text-white bg-indigo-500 rounded-md  focus:bg-indigo-600 focus:outline-none"
+              >
+                Add to Passport
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
