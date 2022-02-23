@@ -1,6 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { Hero } from "../components/Hero";
+import { PopularSection } from "../components/PopularSection";
 
 const Home = () => {
   const [trips, setTrips] = useState([]);
@@ -35,7 +36,12 @@ const Home = () => {
     );
   };
 
-  return <Hero />;
+  return (
+    <>
+      <Hero />
+      <PopularSection />
+    </>
+  );
 };
 
 export default Home;
