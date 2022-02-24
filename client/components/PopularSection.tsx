@@ -2,7 +2,7 @@ import React from "react";
 
 export const PopularSection: React.FC = ({}) => {
   return (
-    <div className="h-[400px] max-w-full bg-purple-500 relative">
+    <div className="h-[800px] max-w-full bg-purple-500 relative">
       <div className="absolute top-1 p-10 w-full">
         <p className="text-lg">Most Favorited Countries</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-5">
