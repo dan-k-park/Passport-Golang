@@ -1,5 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { FavoritedSection } from "../components/FavoritedSection";
 import { Hero } from "../components/Hero";
 import { PopularSection } from "../components/PopularSection";
 
@@ -26,20 +27,11 @@ const Home = () => {
     return <div>Loading...</div>;
   }
 
-  const renderTripItem = (trip: any) => {
-    return (
-      <li>
-        <p>{trip.country}</p>
-
-        <p>{trip.traveler}</p>
-      </li>
-    );
-  };
-
   return (
     <>
       <Hero />
       <PopularSection />
+      <FavoritedSection />
     </>
   );
 };

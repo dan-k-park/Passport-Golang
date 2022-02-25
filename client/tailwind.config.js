@@ -8,6 +8,9 @@ module.exports = {
       backgroundImage: {
         "hero": "url('/heroBg.jpg')",
       },
+      aspectRatio: {
+        "popCard": "1 / 8",
+      },
       screens: {
         "xs": "475px",
         "sm": "640px",
