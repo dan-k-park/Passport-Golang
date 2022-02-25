@@ -49,7 +49,7 @@ export const Navbar: React.FC<{}> = ({}) => {
   };
 
   return (
-    <nav className="z-99 bg-white shadow-lg sticky top-0">
+    <nav className="z-10 bg-white shadow-lg sticky top-0">
       <div className="max-w-6xl mx-auto px-4">
         <div className="flex justify-between">
           <div className="cursor-pointer">

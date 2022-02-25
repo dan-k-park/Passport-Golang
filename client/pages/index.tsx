@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FavoritedSection } from "../components/FavoritedSection";
+import { RecommendationSection } from "../components/RecommendationSection";
 import { Hero } from "../components/Hero";
 import { PopularSection } from "../components/PopularSection";
+import { Footer } from "../components/Footer";
 
 const Home = () => {
   const [trips, setTrips] = useState([]);
@@ -30,8 +31,9 @@ const Home = () => {
   return (
     <>
       <Hero />
+      <RecommendationSection />
       <PopularSection />
-      <FavoritedSection />
+      <Footer />
     </>
   );
 };

@@ -10,7 +10,7 @@ export const PopularSection: React.FC = ({}) => {
           alt="product"
         />
         <div className="px-6 py-4">
-          <h4 className="mb-3 text-xl font-semibold tracking-tight text-white">
+          <h4 className="mb-3 text-lg sm:text-xl font-semibold tracking-tight text-white">
             Adobrasig
           </h4>
           <p className="text-white">10 Visits</p>
@@ -21,7 +21,7 @@ export const PopularSection: React.FC = ({}) => {
   return (
     <div className="h-fit w-screen">
       <div className="pt-[50px] px-[80px]">
-        <p className="text-2xl md:text-3xl lg:text-4xl font-medium text-center sm:text-left">
+        <p className="text-2xl lg:text-3xl font-medium text-center sm:text-left">
           Most Popular Countries
         </p>
         <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-5">
