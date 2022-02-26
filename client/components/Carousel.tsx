@@ -11,8 +11,27 @@ const settings = {
 };
 
 export const Carousel: React.FC = ({}) => {
+  const renderCards = () => {
+    return (
+      <div className="relative bg-cyan-300 flex flex-col content-center items-center h-[calc(8rem_+_12vw)] w-[calc(9rem_+_12vw)] mt-[calc(5rem_+_2vw)] rounded-lg shadow-lg">
+        <img
+          className="absolute w-2/5 h-2/5 left-1/2 bottom-4/5 -translate-x-1/2 -translate-y-1/2 rounded-full"
+          src="/countryCardPlaceholder.jpg"
+          alt="product"
+        />
+        <h4 className="text-white text-center text-[calc(0.6rem_+_0.5vw)] py-0 px-[calc(1rem_+_1vw]">
+          Lorem ipsum dolor sit amet consectetur, adipisicing elit. Natus
+          voluptate voluptatum expedita fugit adipisci possimus enim ipsa
+          consequatur! Sequi, tempore! Enim dolores repellendus libero odio
+          repudiandae ea, tenetur quibusdam animi.
+        </h4>
+        <h3 className="pt-4 text-[calc(0.5rem_+_1vw)]">Dennis (Uzbekistan)</h3>
+      </div>
+    );
+  };
+
   return (
-    <div className="w-[50vw]">
+    <div className="w-[50vw] flex flex-col content-center">
       <link
         rel="stylesheet"
         type="text/css"
@@ -25,22 +44,9 @@ export const Carousel: React.FC = ({}) => {
         href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"
       />
       <Slider {...settings}>
-        <div className="bg-rose-400 max-w-[250px] rounded-lg shadow-lg">
-          {/* <img
-            className="w-[100px] rounded-t-lg"
-            src="/countryCardPlaceholder.jpg"
-            alt="product"
-          /> */}
-          <div className="px-6 py-4">
-            <h4 className="mb-3 text-lg sm:text-xl font-semibold tracking-tight text-white">
-              Adobrasig
-            </h4>
-            <p className="text-white">10 Visits</p>
-          </div>
-        </div>
-        <div>
-          <h3>2</h3>
-        </div>
+        {renderCards()}
+        {renderCards()}
+        {renderCards()}
       </Slider>
     </div>
   );

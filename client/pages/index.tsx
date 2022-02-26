@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { RecommendationSection } from "../components/RecommendationSection";
 import { Hero } from "../components/Hero";
-import { PopularSection } from "../components/PopularSection";
+import { RecentSection } from "../components/RecentSection";
 import { Footer } from "../components/Footer";
 
 const Home = () => {
@@ -32,7 +32,7 @@ const Home = () => {
     <>
       <Hero />
       <RecommendationSection />
-      <PopularSection />
+      <RecentSection />
       <Footer />
     </>
   );
