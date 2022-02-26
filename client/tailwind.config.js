@@ -23,6 +23,9 @@ module.exports = {
 
         "2xl": "1536px",
       },
+      width: {
+        "50vw": "50vw",
+      },
     },
   },
   plugins: [],

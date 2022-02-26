@@ -5,14 +5,14 @@ const settings = {
   infinite: true,
   slidesToShow: 1,
   slidesToScroll: 1,
-  autoplay: true,
-  autoplaySpeed: 2000,
+  autoplay: false,
+  autoplaySpeed: 5000,
   cssEase: "linear",
 };
 
 export const Carousel: React.FC = ({}) => {
   return (
-    <div>
+    <div className="w-[50vw]">
       <link
         rel="stylesheet"
         type="text/css"
@@ -24,38 +24,22 @@ export const Carousel: React.FC = ({}) => {
         type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"
       />
-      <h2>Responsive</h2>
       <Slider {...settings}>
-        <div>
-          <div
-            style={{
-              background: "hotpink",
-              color: "white",
-            }}
-          >
-            <h3>1</h3>
+        <div className="bg-rose-400 max-w-[250px] rounded-lg shadow-lg">
+          {/* <img
+            className="w-[100px] rounded-t-lg"
+            src="/countryCardPlaceholder.jpg"
+            alt="product"
+          /> */}
+          <div className="px-6 py-4">
+            <h4 className="mb-3 text-lg sm:text-xl font-semibold tracking-tight text-white">
+              Adobrasig
+            </h4>
+            <p className="text-white">10 Visits</p>
           </div>
         </div>
         <div>
           <h3>2</h3>
-        </div>
-        <div>
-          <h3>3</h3>
-        </div>
-        <div>
-          <h3>4</h3>
-        </div>
-        <div>
-          <h3>5</h3>
-        </div>
-        <div>
-          <h3>6</h3>
-        </div>
-        <div>
-          <h3>7</h3>
-        </div>
-        <div>
-          <h3>8</h3>
         </div>
       </Slider>
     </div>
