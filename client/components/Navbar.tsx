@@ -55,9 +55,7 @@ export const Navbar: React.FC<{}> = ({}) => {
           <div className="cursor-pointer">
             <NextLink href="/">
               <div className="flex items-center py-4 px-2">
-                <span className="font-bold text-gray-500 text-lg">
-                  Passport
-                </span>
+                <span className="font-bold text-4xl">Passport</span>
               </div>
             </NextLink>
           </div>

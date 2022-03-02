@@ -21,7 +21,7 @@ export const RecommendationSection: React.FC = () => {
       </div>
       <img
         className="w-full rounded-lg"
-        src="/countryCardPlaceholder.jpg"
+        src="/placeholder1.jpg"
         alt="product"
       />
     </div>

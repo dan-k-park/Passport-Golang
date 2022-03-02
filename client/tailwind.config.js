@@ -1,3 +1,4 @@
+const defaultTheme = require("tailwindcss/defaultTheme");
 module.exports = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx}",
@@ -5,8 +6,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        "Caveat": ["Caveat", ...defaultTheme.fontFamily.sans],
+      },
       backgroundImage: {
         "hero": "url('/heroBg.jpg')",
+        "background": "url(/background.jpg)",
       },
       aspectRatio: {
         "popCard": "1 / 8",

@@ -1,15 +1,33 @@
+import React, { useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import React from "react";
-
-export const Carousel: React.FC = ({}) => {
-  const [emblaRef] = useEmblaCarousel();
+import Autoplay from "embla-carousel-autoplay";
+export const Carousel = () => {
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay()]);
 
   return (
-    <div className="overflow-hidden" ref={emblaRef}>
+    <div className="overflow-hidden w-[50vw]" ref={emblaRef}>
       <div className="flex">
-        <div className="relative flex-slide">Slide 1</div>
-        <div className="relative flex-slide">Slide 2</div>
-        <div className="reltive flex-slide">Slide 3</div>
+        <div className="relative flex-slide mx-[50px]">
+          <img
+            className="w-full rounded-lg"
+            src="/placeholder3.jpg"
+            alt="product"
+          />
+        </div>
+        <div className="relative flex-slide mx-[50px]">
+          <img
+            className="w-full rounded-lg"
+            src="/placeholder4.jpg"
+            alt="product"
+          />
+        </div>
+        <div className="relative flex-slide mx-[50px]">
+          <img
+            className="w-full rounded-lg"
+            src="/placeholder5.jpg"
+            alt="product"
+          />
+        </div>
       </div>
     </div>
   );
