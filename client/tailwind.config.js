@@ -26,6 +26,9 @@ module.exports = {
       width: {
         "50vw": "50vw",
       },
+      flex: {
+        "slide": "0 0 100%",
+      },
     },
   },
   plugins: [],
