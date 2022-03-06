@@ -2,7 +2,14 @@ import React, { useEffect } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 export const Carousel = () => {
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [Autoplay()]);
+  const options = {
+    delay: 4000,
+    stopOnMouseEnter: true,
+    stopOnInteraction: false,
+  };
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [
+    Autoplay(options),
+  ]);
 
   return (
     <div className="overflow-hidden w-[50vw]" ref={emblaRef}>
