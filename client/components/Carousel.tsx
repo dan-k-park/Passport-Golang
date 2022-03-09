@@ -19,13 +19,13 @@ export const Carousel = () => {
 
   const renderCarouselItem = (img: string) => {
     return (
-      <div className="relative bg-black w-full rounded-lg">
+      <div className="group relative bg-black w-full rounded-lg">
         <img
-          className="w-full rounded-lg hover:opacity-50"
+          className="w-full rounded-lg group-hover:opacity-50"
           src={img}
           alt="product"
         />
-        <div className="absolute w-full flex items-center justify-center opacity-0 hover:opacity-100 ease-in-out duration-500 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-white">
+        <div className="absolute w-full flex items-center justify-center opacity-0 group-hover:opacity-100 ease-in-out duration-500 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center text-white">
           <p className="text-2xl"> Sample Text</p>
         </div>
       </div>
