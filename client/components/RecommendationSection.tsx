@@ -3,7 +3,7 @@ import useWindowSize from "../hooks/useWindowSize";
 
 export const RecommendationSection: React.FC = () => {
   const info = (
-    <p className="font-medium mt-[20px]">
+    <p className="font-medium text-2xl mt-[20px]">
       The current most frequently visited country, Adobrasig is Lorem ipsum
       dolor sit, amet consectetur adipisicing elit. Pariatur neque mollitia
       consectetur delectus sunt dignissimos a impedit id magnam facere? Quisquam
