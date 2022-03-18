@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import NextLink from "next/link";
 import axios from "axios";
 import { isNotServer } from "../utils/isNotServer";
+import useWindowSize from "../hooks/useWindowSize";
 
 const navLinkClasses = `py-4 px-2 text-gray-500 font-semibold cursor-pointer hover:text-green-500 transition duration-300`;
 
@@ -91,22 +92,19 @@ export const Navbar: React.FC<{}> = ({}) => {
                 Trips
               </div>
             </li>
-            {ls?.getItem("user") ? (
-              <li>
-                <div
-                  onClick={handleLogout}
-                  className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"
-                >
-                  Log Out
-                </div>
-              </li>
-            ) : (
-              <li>
-                <div className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">
-                  Log In
-                </div>
-              </li>
-            )}
+            <li>
+              <div
+                onClick={handleLogout}
+                className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300"
+              >
+                Log Out
+              </div>
+            </li>
+            <li>
+              <div className="block text-sm px-2 py-4 hover:bg-green-500 transition duration-300">
+                Log In
+              </div>
+            </li>
           </ul>
         </div>
       ) : null}
