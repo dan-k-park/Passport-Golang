@@ -8,7 +8,7 @@ const Login: React.FC<{}> = ({}) => {
   const password = useRef<HTMLInputElement | null>(null);
   const router = useRouter();
 
-  const handleGuh = async (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {
       const res = await axios.post("/api/login", {
@@ -33,7 +33,7 @@ const Login: React.FC<{}> = ({}) => {
         <h1 className="text-2xl font-medium text-primary mt-4 mb-12 text-center">
           Log In
         </h1>
-        <form onSubmit={handleGuh}>
+        <form onSubmit={handleSubmit}>
           <div>
             <label htmlFor="username">Username</label>
             <input
